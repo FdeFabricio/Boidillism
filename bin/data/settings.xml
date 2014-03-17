@@ -1,0 +1,17 @@
+<group>
+	<Boids/>
+	<Direction_arrow>0</Direction_arrow>
+	<Size>5</Size>
+	<Max_Force>0.2278</Max_Force>
+	<Max_Speed>4.825</Max_Speed>
+	<Separation/>
+	<draw_radius>0</draw_radius>
+	<weight>0.4</weight>
+	<radius>100</radius>
+	<Alignment/>
+	<Cohesion/>
+<group/>
+<Gravity>1</Gravity>
+	<Debug/>
+	<Show_FPS>1</Show_FPS>
+</group>
