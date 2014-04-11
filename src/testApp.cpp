@@ -3,13 +3,13 @@
 //--------------------------------------------------------------
 void testApp::setup()
 {
-    
+    ofSetVerticalSync(false);
     
     ofBackground(255);
     //load our typeface
     ver.loadFont("verdana.ttf", 10);
     
-    for (int i = 0; i < 900; i++)
+    for (int i = 0; i < 1500; i++)
     {
         boids.addBoid(ofGetWidth()/2, ofGetHeight()/2);
     }

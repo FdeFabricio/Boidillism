@@ -70,6 +70,7 @@ public:
     ofVec2f separation(vector <Boid *>);
     ofVec2f alignment(vector <Boid *>);
     ofVec2f cohesion(vector <Boid *>);
+    
     void borders();
     void pullToCenter(ofVec2f);
     
@@ -80,6 +81,11 @@ public:
     
     // tests
     void followMouse();
+    
+    
+    //optmization
+    void forces(vector <Boid *>, ofVec2f *, ofVec2f *, ofVec2f *);
+    ofVec2f sep, ali, coh;
 };
 
 class Flock {

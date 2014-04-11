@@ -72,9 +72,11 @@ void Boid::draw()
 void Boid::update(vector <Boid *> boids)
 {
     /********************************/
-    ofVec2f sep = separation(boids);
-    ofVec2f ali = alignment(boids);
-    ofVec2f coh = cohesion(boids);
+    ofVec2f sep, ali, coh;
+    forces(boids, &sep, &ali, &coh);
+    //sep = separation(boids);
+    //ali = alignment(boids);
+    //coh = cohesion(boids);
     
     sep *= weightSeparation;
     ali *= weightAlignment;
@@ -263,4 +265,89 @@ void Boid::setMaxForce(float newMaxForce)
 void Boid::setMaxSpeed(float newMaxSpeed)
 {
     maxSpeed = newMaxSpeed;
+}
+
+void Boid::forces(vector <Boid *> boids, ofVec2f *sep, ofVec2f *ali, ofVec2f *coh)
+{
+    ofVec2f steerSep = ofVec2f(0, 0);
+    ofVec2f steerAli = ofVec2f(0, 0);
+    ofVec2f steerCoh = ofVec2f(0, 0);
+    
+    int countSep = 0;
+    int countAli = 0;
+    int countCoh = 0;
+    
+    // For every boid in the system, check if it's too close
+    for (Boid *other : boids)
+    {
+        float d = position.distance(other->getPosition());
+        // If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
+        
+        
+        /** Separation **/
+        if ((d > 0) && (d < radiusSeparation))
+        {
+            // Calculate vector pointing away from neighbor
+            ofVec2f diff = position - other->getPosition();
+            diff.normalize();
+            diff /= d;        // Weight by distance
+            steerSep += diff;
+            countSep++;            // Keep track of how many
+        }
+        
+        /** Alignment **/
+        if ((d > 0) && (d < radiusAlignment)) {
+            steerAli += other->getVelocity();
+            countAli++;
+        }
+        
+        /** Cohesion **/
+        if ((d > 0) && (d < radiusCohesion)) {
+            steerCoh += other->getPosition(); // Add location
+            countCoh++;
+        }
+    }
+    
+    /** Separation **/
+    // Average -- divide by how many
+    if (countSep > 0) {
+        steerSep /= (float)countSep;
+    }
+    
+    // As long as the vector is greater than 0
+    if (steerSep.length() > 0) {
+        // First two lines of code below could be condensed with new PVector setMag() method
+        // Not using this method until Processing.js catches up
+        steerSep = steerSep.getScaled(maxSpeed);
+        
+        // Implement Reynolds: Steering = Desired - Velocity
+        //steer.normalize();
+        //steer *= maxSpeed;
+        steerSep -= velocity;
+        steerSep.limit(maxForce);
+    }
+    *sep = steerSep;
+    
+    /** Alignment **/
+    if (countAli > 0) {
+        steerAli /= (float)countAli;
+        // First two lines of code below could be condensed with new PVector setMag() method
+        // Not using this method until Processing.js catches up
+        steerAli.getScaled(maxSpeed);
+        
+        // Implement Reynolds: Steering = Desired - Velocity
+        //sum.normalize();
+        //sum.mult(maxspeed);
+        steerAli -= velocity;
+        steerAli.limit(maxForce);
+        *ali = steerAli;
+    }
+    else *ali = ofVec2f(0, 0);
+    
+    /** Cohesion **/
+    if (countCoh > 0) *coh = seek(steerCoh/countCoh);  // Steer towards the location
+    else *coh = ofVec2f(0, 0);
+
+
+    
 }
