@@ -1,6 +1,6 @@
 #include "Boid.h"
 
-void Boid::draw()
+void Boid::draw(ofImage *img, int *mat, linkedList targets)
 {
     ofPushMatrix();
     
@@ -36,9 +36,27 @@ void Boid::draw()
         }
     
         ofPushStyle();
+        if (!(position.x < 0 || position.x > ofGetHeight() * img->width/img->height || position.y < 0 || position.y > ofGetHeight()))
+        {
+            color = img->getColor(ofMap(position.x, 0, ofGetHeight() * img->width/img->height, 0, img->width), ofMap(position.y, 0, ofGetHeight(), 0, img->height));
+            color = ofColor(0);
+            int index = (int)ofMap(position.x, 0, ofGetHeight() * img->width/img->height, 0, img->width) + (int)ofMap(position.y, 0, ofGetHeight(), 0, img->height) * img->width;
+            mat[index] = 1;
+            targets.deleteMatch(index);
+//            ofPushStyle();
+//            ofSetColor(img.getColor(i, j));
+//            ofSetRectMode(OF_RECTMODE_CENTER);
+//            ofRect(ofMap(i, 0, img.width, 0, ofGetHeight() * img.width/img.height), ofMap(j, 0, img.height, 0, ofGetHeight()),10, 10);
+//            //ofCircle(ofMap(i, 0, img.width, 0, ofGetHeight() * img.width/img.height), ofMap(j, 0, img.height, 0, ofGetHeight()), 5);
+//            ofPopStyle();
+        }
     
+    
+        else color = ofColor(0);
         ofSetColor(color);
-    ofCircle(0,0,size);
+        //ofCircle(0,0,size);
+        ofSetRectMode(OF_RECTMODE_CENTER);
+    ofRect(0, 0, size, size);
 //        ofBeginShape();
 //            ofVertex(0, -size * 1.3f);
 //            ofVertex(-size, size * 1.3f);
@@ -71,24 +89,37 @@ void Boid::draw()
 
 void Boid::update(vector <Boid *> boids)
 {
-    /********************************/
-    ofVec2f sep = separation(boids);
-    ofVec2f ali = alignment(boids);
-    ofVec2f coh = cohesion(boids);
+    if (move2origin)
+    {
+        if ((position-origin).length() <= size)
+        {
+            position = origin;
+            velocity.set(0);
+        }
+        else pull2point(origin, 1);
+    }
+    else
+    {
+        /********************************/
+        ofVec2f sep = separation(boids);
+        ofVec2f ali = alignment(boids);
+        ofVec2f coh = cohesion(boids);
+        
+        sep *= weightSeparation;
+        ali *= weightAlignment;
+        coh *= weightCohesion;
+        
+        acceleration += sep;
+        acceleration += ali;
+        acceleration += coh;
+        /********************************/
+        
+        //if (gravity) pullToCenter(ofVec2f(ofGetWidth()/2, ofGetHeight()/2));
+        if (gravity) pullToCenter(ofVec2f(ofGetMouseX(), ofGetMouseY()));
+        //followMouse();
+        borders();
+    }
     
-    sep *= weightSeparation;
-    ali *= weightAlignment;
-    coh *= weightCohesion;
-    
-    acceleration += sep;
-    acceleration += ali;
-    acceleration += coh;
-    /********************************/
-    
-    if (gravity) pullToCenter(ofVec2f(ofGetWidth()/2, ofGetHeight()/2));
-    
-    //followMouse();
-    borders();
     // Update velocity
     velocity += acceleration;
     // Limit speed
@@ -231,7 +262,7 @@ void Boid::pullToCenter(ofVec2f center)
 {
 	ofVec2f dirToCenter = position - center;
 	float distToCenter = dirToCenter.length();
-	float maxDistance = ofGetHeight()/3;
+	float maxDistance = ofGetHeight()/4;
 	
 	if (distToCenter > maxDistance ){
 		dirToCenter.normalize();
@@ -239,6 +270,24 @@ void Boid::pullToCenter(ofVec2f center)
 		velocity -= dirToCenter * ( ( distToCenter - maxDistance ) * pullStrength );
 	}
 }
+
+void Boid::pull2point(ofVec2f p, float maxDistance)
+{
+	ofVec2f dirToPoint = position - p;
+	float distToPoint = dirToPoint.length();
+	
+	if (distToPoint > maxDistance)
+    {
+		dirToPoint.normalize();
+		float pullStrength = 0.05f;
+		velocity -= dirToPoint * ( ( distToPoint - maxDistance ) * pullStrength );
+	}
+}
+
+//void Boid::kill(vector <Boid *> boids)
+//{
+//    this->~Boid();
+//}
 
 ofVec2f Boid::getPosition()
 {

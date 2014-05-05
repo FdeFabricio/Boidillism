@@ -1,11 +1,11 @@
 #include "ofMain.h"
-
-
+#include "linkedlist.h"
 
 class Boid {
 private:
     float size;
     ofVec2f position;
+    ofVec2f origin;
     ofVec2f velocity;
     ofVec2f acceleration;
     float angle;
@@ -17,20 +17,23 @@ private:
     
 public:
     
-    bool debug_drawArrow, debug_drawRadiusSeparation, debug_drawRadiusAlignment, debug_drawRadiusCohesion, gravity;
+    bool debug_drawArrow, debug_drawRadiusSeparation, debug_drawRadiusAlignment, debug_drawRadiusCohesion, gravity, move2origin;
     float radiusSeparation, radiusAlignment, radiusCohesion;
     float weightSeparation, weightAlignment, weightCohesion;
     float gravityForce;
     
-    Boid(float _x = ofGetWidth()/2,
-         float _y = ofGetHeight()/2,
+    Boid(float _px = ofGetWidth()/2,
+         float _py = ofGetHeight()/2,
+         float _ox = 0,
+         float _oy = 0,
          ofColor _color = ofColor(0),
          float _size = 3.0f,
          float _maxSpeed = 2.0f,
          float _maxForce = 0.05f)
     {
         angle = ofRandom(TWO_PI);
-        position.set(_x, _y);
+        position.set(_px, _py);
+        origin.set(_ox, _oy);
         color.set(_color);
         velocity.set(cos(angle), sin(angle));
         acceleration.set(0.0f);
@@ -47,6 +50,7 @@ public:
         weightAlignment = 1.0f;
         weightCohesion = 1.0f;
         
+        move2origin = false;
         debug_drawArrow = false;
         debug_drawRadiusSeparation = false;
         debug_drawRadiusAlignment = false;
@@ -65,13 +69,14 @@ public:
     void setMaxSpeed(float newMaxSpeed);
     
     // implemented
-    void draw();
+    void draw(ofImage *img, int *mat, linkedList targets);
     ofVec2f seek(ofVec2f);
     ofVec2f separation(vector <Boid *>);
     ofVec2f alignment(vector <Boid *>);
     ofVec2f cohesion(vector <Boid *>);
     void borders();
     void pullToCenter(ofVec2f);
+    void pull2point(ofVec2f, float);
     
     
     // to implement
@@ -80,27 +85,36 @@ public:
     
     // tests
     void followMouse();
+    
+    void kill(vector <Boid *> boids, ofImage img);
 };
 
 class Flock {
 public:
+    
     vector <Boid *> boids; // an list of all the boids
     
-    void addBoid(float x, float y)
+    void addBoid(float px, float py, float ox, float oy)
     {
-        Boid * b = new Boid(x, y);
+        Boid * b = new Boid(px, py, ox, oy);
         boids.push_back(b);
     }
     
-    void addBoid(float x, float y, ofColor color)
+    void addBoid(float px, float py, float ox, float oy, ofColor color)
     {
-        Boid * b = new Boid(x, y, color);
+        Boid * b = new Boid(px, py, ox, oy, color);
         boids.push_back(b);
     }
     
-    void draw()
+    void addBoid(float px, float py, ofColor color)
     {
-        for (int i = 0; i < boids.size(); i++) boids[i]->draw();
+        Boid * b = new Boid(px, py, 0, 0, color);
+        boids.push_back(b);
+    }
+    
+    void draw(ofImage img, int *mat)
+    {
+        for (int i = 0; i < boids.size(); i++) boids[i]->draw(&img, mat);
     }
     
     void update()
@@ -108,7 +122,7 @@ public:
         for (int i = 0; i < boids.size(); i++) boids[i]->update(boids);
     }
     
-    void gui_update(float _size, float newforce, float newspeed, bool _arrow, bool _separation, bool _alignment, bool _cohesion, float _wSeparation, float _wAlignment, float _wCohesion, float _radiusSeparation, float _radiusAlignment, float _radiusCohesion, bool _gravity, float _gravityForce)
+    void gui_update(float _size, float newforce, float newspeed, bool _arrow, bool _separation, bool _alignment, bool _cohesion, float _wSeparation, float _wAlignment, float _wCohesion, float _radiusSeparation, float _radiusAlignment, float _radiusCohesion, bool _gravity, float _gravityForce, bool _move2origin)
     {
         for (int i = 0; i < boids.size(); i++)
         {
@@ -131,6 +145,8 @@ public:
             
             boids[i]->gravity = _gravity;
             boids[i]->gravityForce = _gravityForce;
+            
+            boids[i]->move2origin = _move2origin;
         }
     }
 };

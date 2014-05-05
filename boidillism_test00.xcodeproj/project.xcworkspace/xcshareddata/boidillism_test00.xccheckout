@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>75B2B775-76C5-4AF9-8940-DCDC22003863</string>
+	<key>IDESourceControlProjectName</key>
+	<string>boidillism_test00</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>D1972DC9-3CFB-4644-B30E-728621B192AB</key>
+		<string>https://github.com/FdeFabricio/Boidillism.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>boidillism_test00.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>D1972DC9-3CFB-4644-B30E-728621B192AB</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/FdeFabricio/Boidillism.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>D1972DC9-3CFB-4644-B30E-728621B192AB</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>D1972DC9-3CFB-4644-B30E-728621B192AB</string>
+			<key>IDESourceControlWCCName</key>
+			<string>boidillism_test00</string>
+		</dict>
+	</array>
+</dict>
+</plist>
