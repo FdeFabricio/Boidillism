@@ -21,7 +21,7 @@ class testApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
     
-        Flock boids;
+        Flock boids;	
     
         ofTrueTypeFont ver;
     
@@ -32,7 +32,7 @@ class testApp : public ofBaseApp{
     
     
     
-    
+    bool debugDraw;
     ofxPanel gui;
     ofxLabel gui_boids;
     ofxFloatSlider gui_size;
@@ -41,6 +41,7 @@ class testApp : public ofBaseApp{
     ofxFloatSlider gui_speedMax;
     ofxToggle gui_drawArrow;
     ofxToggle gui_applyGravity;
+    ofxToggle gui_move2origin;
     ofxToggle gui_showFPS;
     
     ofxLabel gui_alignment;
@@ -59,5 +60,16 @@ class testApp : public ofBaseApp{
     ofxFloatSlider gui_radiusSeparation;
     
     ofxLabel gui_debug;
+    
+    
+    
+    
+    ofImage img;
+    ofImage blob;
+    int *mat;
+    int auxaux;
+    
+    linkedList targets;
+   
     
 };
